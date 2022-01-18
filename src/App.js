@@ -1,24 +1,46 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from "react";
+import Loading from "./tours/Loading";
+import Tours from "./tours/Tour";
+import { data } from "./tours/tours";
+
+const url = "https://course-api.com/react-tours-project";
 
 function App() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [tourData, setTourData] = useState([]);
+
+  const fetchTours = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(url);
+      const tours = await response.json();
+      console.log(tours);
+      setIsLoading(false);
+      setTourData(tours);
+    } catch (error) {
+      setIsLoading(false);
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTours();
+    // setTourData(data);
+  }, []);
+  if (isLoading) {
+    return (
+      <main>
+        {console.log("loading")}
+        <Loading></Loading>
+      </main>
+    );
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <main>
+      {/* <Tours tours={data} fetchTours={fetchTours}></Tours> */}
+      <Tours tours={tourData} fetchTours={fetchTours}></Tours>
+    </main>
   );
 }
 
